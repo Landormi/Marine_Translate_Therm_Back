@@ -34,7 +34,7 @@ app.post('/api/github/token', async (req, res) => {
         },
       }
     );
-    console.log(response.data)
+    console.log(response)
     res.json(response.data);
   } catch (error) {
     console.error('Error while retrieving the token:', error);
