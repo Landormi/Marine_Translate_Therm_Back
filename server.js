@@ -36,7 +36,7 @@ app.post('/api/github/token', async (req, res) => {
     res.json(response.data);
   } catch (error) {
     console.error('Error while retrieving the token:', error);
-    res.status(500).send('Server internal error');
+    res.status(500).send('Server internal error', error);
   }
 });
 
