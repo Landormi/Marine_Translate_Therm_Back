@@ -55,7 +55,7 @@ app.post('/api/github/content', async (req, res) => {
     res.json(Buffer.from(response.data.content, 'base64').toString('utf-8'));
   }catch (error){
     console.error('Error while retrieving the file count', error);
-    res.status(500).send('Server internal error');
+    res.status(500).send('Server internal error', error);
   }
 
 });
@@ -76,6 +76,7 @@ app.post('/api/github/list', async (req, res) => {
     res.json(files);
   }catch (error){
     console.error('Error while retrieving file list', error);
+    res.status(500).send('Server internal error', error);
   }
 
 });
@@ -123,6 +124,7 @@ app.post('/api/github/update', async (req, res) => {
     res.json(response2);
   }catch (error){
     console.error('Error while updating the file', error);
+    res.status(500).send('Server internal error', error);
   }
 
 });
@@ -224,7 +226,7 @@ app.post('/api/github/changed', async (req, res) => {
     res.json({ diffsData, commentsData, pullnumber });
   } catch (error) {
     console.error('Aïe', error);
-    res.status(500).send('Error while retrieving data.');
+    res.status(500).send('Error while retrieving data.', error);
   }
 });
 
@@ -289,7 +291,7 @@ app.post('/api/github/pull', async (req, res) => {
   } catch (error) {
     console.error('Error during merge:', error);
     console.log("______________________________________");
-    res.status(500).send('Server internal error');
+    res.status(500).send('Server internal error', error);
   }
 });
 
