@@ -16,6 +16,7 @@ app.use(json());
 
 app.post('/api/github/token', async (req, res) => {
   const { code } = req.body;
+  console.log('code : '+ code)
   const CLIENT_ID = process.env.GITHUB_CLIENT_ID;
   const CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET;
   try {
