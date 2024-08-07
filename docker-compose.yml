@@ -14,10 +14,8 @@ services:
     container_name: backend_proxy
     restart: unless-stopped
     build: ./proxy
-    domainname: ${DOMAIN_NAME}
-    hostname: ${DOMAIN_NAME}
     ports:
-      - "444:443"
+      - "5002:443"
     depends_on:
       - node_server_backend
     
