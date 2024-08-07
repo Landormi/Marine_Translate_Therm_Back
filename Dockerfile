@@ -7,6 +7,7 @@ COPY package*.json ./
 RUN npm install
 
 COPY . .
+COPY env_vars.txt .env
 
 EXPOSE 5000
 

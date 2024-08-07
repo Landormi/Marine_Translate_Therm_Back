@@ -1,9 +1,23 @@
 version: '3.8'
 
 services:
-  web:
-    image: translate_backend
+  node_server_backend:
+    container_name: node_server_backend
+    hostname: node_server_backend
+    build: .
+    restart: unless-stopped
     ports:
-      - "5000:5000"
+      - "5001:5000"
     env_file:
       - .env
+  backend_proxy:
+    container_name: backend_proxy
+    restart: unless-stopped
+    build: ./proxy
+    domainname: ${DOMAIN_NAME}
+    hostname: ${DOMAIN_NAME}
+    ports:
+      - "444:443"
+    depends_on:
+      - node_server_backend
+    

@@ -1,0 +1,22 @@
+[req]
+default_bits = 2048
+default_md = sha256
+prompt = no
+distinguished_name = req_distinguished_name
+req_extensions = v3_req
+
+[req_distinguished_name]
+C = BE
+L = Oostende
+O = Vlaams Instituut voor de Zee
+OU = VLIZ Marine Data Center (VMDC)
+CN = docker-dev.vliz.be
+
+[v3_req]
+basicConstraints = CA:false
+extendedKeyUsage = serverAuth
+subjectAltName = @alt_names
+
+[alt_names]
+DNS.1 = docker-dev.vliz.be
+DNS.2 = www.docker-dev.vliz.be
