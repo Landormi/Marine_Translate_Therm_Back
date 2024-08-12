@@ -16,8 +16,6 @@ app.use(json());
 
 app.post('/api/github/token', async (req, res) => {
   const { code } = req.body;
-  console.log(req)
-  console.log('code : '+ code)
   const CLIENT_ID = process.env.GITHUB_CLIENT_ID;
   const CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET;
   try {
@@ -34,7 +32,6 @@ app.post('/api/github/token', async (req, res) => {
         },
       }
     );
-    console.log(response)
     res.json(response.data);
   } catch (error) {
     console.error('Error while retrieving the token:', error);
@@ -184,7 +181,6 @@ app.post('/api/github/changed', async (req, res) => {
         'X-GitHub-Api-Version': '2022-11-28'
       }
     });
-    // console.log(files);
 
 
     const diffsData = await Promise.all(files.map(async file => {
@@ -204,9 +200,11 @@ app.post('/api/github/changed', async (req, res) => {
         filename: file.filename,
         before: beforeContent,
         after: afterContent,
+        filesha : file.sha,
         diff: diff
       };
     }));
+
 
     const commentsResponse = await octokit.request('GET /repos/{owner}/{repo}/pulls/{pull_number}/comments', {
       owner: process.env.GITHUB_OWNER,
@@ -216,7 +214,6 @@ app.post('/api/github/changed', async (req, res) => {
         'X-GitHub-Api-Version': '2022-11-28'
       }
     });
-    // console.log(commentsResponse.data);
 
     const commentsData = commentsResponse.data.map(comment => ({
       path: comment.path,
@@ -245,13 +242,6 @@ app.post('/api/github/pull', async (req, res) => {
       },
       direction: process.env.GITHUB_BRANCH,
     });
-    // console.log("______________________________________");
-    // console.log("response :");
-    // console.log(response);
-    // console.log("______________________________________");
-    // console.log("response data :");
-    // console.log(response.data);
-    // console.log("______________________________________");
     if(response.data.mergeable){
       const markReadyQuery = `
         mutation($pullRequestId: ID!) {
@@ -270,8 +260,6 @@ app.post('/api/github/pull', async (req, res) => {
       const responserfr = await octokit.graphql(markReadyQuery, {
         pullRequestId
       });
-      // console.log(responserfr);
-      // console.log("______________________________________");
       const mergeResponse = await octokit.request('PUT /repos/{owner}/{repo}/pulls/{pull_number}/merge', {
         owner: process.env.GITHUB_OWNER,
         repo,
@@ -284,12 +272,7 @@ app.post('/api/github/pull', async (req, res) => {
       })
       res.json(mergeResponse.data)
     }else{
-      // console.log("margeble : \n" + response.data.mergeable);
-      // console.log("______________________________________");
     }
-    // console.log(response.data)
-    // console.log("______________________________________");
-    // res.json(response.data);
   } catch (error) {
     console.error('Error during merge:', error);
     console.log("______________________________________");
@@ -297,6 +280,27 @@ app.post('/api/github/pull', async (req, res) => {
   }
 });
 
+app.post('/api/github/comment', async (req, res) => {
+  const { token, pull_number, repo, comment, path, sha, line, side } = req.body;
+
+  try {
+    const octokit = new Octokit({ auth: token });
+    const response = await octokit.request('POST /repos/{owner}/{repo}/pulls/{pull_number}/comments', {
+      owner: process.env.GITHUB_OWNER,
+      repo,
+      pull_number,
+      body: comment,
+      commit_id: sha,
+      path,
+      line,
+      side,
+    })
+    res.json(response.data);
+  } catch (error) {
+    console.error('Error while retrieving the token:', error);
+    res.status(500).send(`CLIENT_ID = ${CLIENT_ID} or ${process.env.GITHUB_CLIENT_ID} Server internal error`);
+  }
+});
 
 
 app.listen(port, () => {
