@@ -81,6 +81,8 @@ app.post('/api/github/token', async (req, res) => {
   const { code } = req.body;
   const CLIENT_ID = process.env.GITHUB_CLIENT_ID;
   const CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET;
+  console.log("CLIENT_ID"+CLIENT_ID);
+  console.log("CLIENT_SECRET"+CLIENT_SECRET);
   try {
     const response = await axios.post(
       'https://github.com/login/oauth/access_token',
@@ -156,7 +158,8 @@ app.post('/api/github/token', async (req, res) => {
  */
 app.get('/api/github/content', async (req, res) => {
   const { repo, path } = req.query;
-  const token = req.headers.authorization;              
+  const token = req.headers.authorization;
+  console.log(token);
   try{
     const octokit = new Octokit({
       auth: token
