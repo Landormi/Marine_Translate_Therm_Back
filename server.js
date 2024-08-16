@@ -81,8 +81,8 @@ app.post('/api/github/token', async (req, res) => {
   const { code } = req.body;
   const CLIENT_ID = process.env.GITHUB_CLIENT_ID;
   const CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET;
-  console.log("CLIENT_ID"+CLIENT_ID);
-  console.log("CLIENT_SECRET"+CLIENT_SECRET);
+  // console.log("CLIENT_ID"+CLIENT_ID);
+  // console.log("CLIENT_SECRET"+CLIENT_SECRET);
   try {
     const response = await axios.post(
       'https://github.com/login/oauth/access_token',
@@ -159,7 +159,7 @@ app.post('/api/github/token', async (req, res) => {
 app.get('/api/github/content', async (req, res) => {
   const { repo, path } = req.query;
   const token = req.headers.authorization;
-  console.log(token);
+  // console.log(token);
   try{
     const octokit = new Octokit({
       auth: token
@@ -351,24 +351,24 @@ app.get('/api/github/list', async (req, res) => {
  *           bearerFormat: JWT
  */
 app.put('/api/github/update', async (req, res) => {
-  console.log("update");
+  // console.log("update");
   const { repo, path, translations, language } = req.body;
   const token = req.headers.authorization;
   try{
-    console.log("1");
+    // console.log("1");
     const octokit = new Octokit({
       auth: token
     });
-    console.log(token);
-    console.log(repo);
-    console.log(path);
+    // console.log(token);
+    // console.log(repo);
+    // console.log(path);
     const response = await octokit.request('GET /repos/{owner}/{repo}/contents/{path}', {
       owner: process.env.GITHUB_OWNER,
       repo,
       path,
       ref: process.env.GITHUB_BRANCH
     });
-    console.log("2");
+    // console.log("2");
     const content = Buffer.from(response.data.content, 'base64').toString('utf-8');
     const contentObj = parse(content);
     contentObj.labels.forEach(label => {
@@ -383,9 +383,9 @@ app.put('/api/github/update', async (req, res) => {
       }
       
     });
-    console.log("3");
+    // console.log("3");
     const updatedContent = stringify(contentObj,{ quotingType: '"', prettyErrors: true });
-    console.log("4");
+    // console.log("4");
     const response2 = await octokit.request('PUT /repos/{owner}/{repo}/contents/{path}', {
       owner: process.env.GITHUB_OWNER,
       repo,
@@ -399,8 +399,8 @@ app.put('/api/github/update', async (req, res) => {
         'Authorization': 'token %s' % octokit.auth,
       }
     });
-    console.log("5");
-    console.log(response2);
+    // console.log("5");
+    // console.log(response2);
     res.json(response2);
   }catch (error){
     console.error('Error while updating the file', error);
@@ -730,7 +730,7 @@ app.put('/api/github/pull', async (req, res) => {
     }
   } catch (error) {
     console.error('Error during merge:', error);
-    console.log("______________________________________");
+    // console.log("______________________________________");
     res.status(500).send('Server internal error');
   }
 });
