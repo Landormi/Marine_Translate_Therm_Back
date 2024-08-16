@@ -864,4 +864,5 @@ app.post('/api/github/comment', async (req, res) => {
 
 app.listen(port, () => {
   console.log(`Serveur backend en écoute sur http://localhost:${port}`);
+  console.log(`Domain's name is : ${process.env.DOMAIN_NAME}`);
 });
