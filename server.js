@@ -104,6 +104,29 @@ app.post('/api/github/token', async (req, res) => {
   }
 });
 
+app.get('/api/github/branch', async (req, res) => {
+  const {repo, path} = req.query;
+  const token = req.headers.authorization;
+  try{
+    const octokit = new Octokit({
+      auth: token
+    });
+    const response = await octokit.request('GET /repos/{owner}/{repo}/branches', {
+      owner: 'OWNER',
+      repo: 'REPO',
+      headers: {
+        'X-GitHub-Api-Version': '2022-11-28'
+      }
+    });
+    const branchs = response.data.filter(branche => branche.name.startsWith(process.env.GITHUB_KEY_BRANCH));
+    res.json(branchs);
+  }catch(error){
+    console.error('Error while retrieving the file count', error);
+    res.status(500).send('Server internal error');
+  }
+});
+
+
 /**
  * @swagger
  * /api/github/content:
@@ -245,7 +268,7 @@ app.get('/api/github/content', async (req, res) => {
  *           bearerFormat: JWT
  */
 app.get('/api/github/list', async (req, res) => {
-  const { repo, path } = req.query;
+  const { repo, path, branch} = req.query;
   const token = req.headers.authorization;
   try{
     const octokit = new Octokit({
@@ -255,7 +278,7 @@ app.get('/api/github/list', async (req, res) => {
       owner: process.env.GITHUB_OWNER,
       repo,
       path: path,
-      ref: process.env.GITHUB_BRANCH
+      ref: branch
     });
     const files = response.data.filter(item => item.type === 'file' && item.name.endsWith('.yml'));
     res.json(files);
